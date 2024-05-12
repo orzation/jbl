@@ -6,7 +6,7 @@
 │     #    #    #   #  #   #    #    #""""  #    # #""""    #      #   │
 │ "mmm"  mm#mm  #   #  "#m"#    "mm  "#mm"  #mmmm" "#mm"    "mm    "mm │
 │                       m  #                                           │
-│                        ""                                     v0.1.0 │
+│                        ""                                     v0.1.1 │
 └──────────────────────────────────────────────────────────────────────┘
 * jbl is a simple cli tool to turn your unicode chars into a png image.
 
