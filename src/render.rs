@@ -28,7 +28,7 @@ impl FontRenderHandler for Metrics<'_> {
             .enumerate()
             .filter(|(_, c)| *c == '\n')
             .collect();
-        let line_number = carrige_pos.len().max(1);
+        let line_number = carrige_pos.len() + 1;
         let max_line_length = match line_number {
             1 => self.text.len(),
             _ => {
