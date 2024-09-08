@@ -8,7 +8,7 @@ use clap::{arg, value_parser, ArgMatches, Command};
 
 pub trait CmdHandler<'a> {
     fn new_command(ver: &'static str) -> Self;
-    fn into_metrics(&'a self) -> Metrics<'a>;
+    fn into_metrics(&'a self) -> Result<Metrics<'a>, String>;
 }
 
 /// Use the clap crate to implement the CmdHandler trait
@@ -56,7 +56,7 @@ impl CmdHandler<'_> for Cmd {
             .get_matches()
     }
 
-    fn into_metrics<'a>(&'a self) -> Metrics<'a> {
+    fn into_metrics<'a>(&'a self) -> Result<Metrics<'a>, String> {
         let font = self.get_one::<String>("font").unwrap();
         let size = self.get_one::<f32>("size").unwrap();
         let color = self.get_one::<String>("color").unwrap();
@@ -67,15 +67,14 @@ impl CmdHandler<'_> for Cmd {
         let mut text_buf = String::new();
         if file != "-" {
             File::open(file)
-                .expect("Failed to open file")
-                .read_to_string(&mut text_buf)
-                .expect("Failed to read file");
+            .and_then(|mut f| f.read_to_string(&mut text_buf))
+            .map_err(|e| format!("failed to read file {}: {}", file, e))?;
         } else {
             // no input file, just block to read std input
             io::stdin()
                 .lock()
                 .read_to_string(&mut text_buf)
-                .expect("Failed to read std input");
+                .map_err(|e| format!("failed to read file {}: {}", file, e))?;
         }
 
         Metrics::new(text_buf, font, *size, color, bg_color, *padding)

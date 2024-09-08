@@ -12,7 +12,7 @@ type Img = ImageBuffer<Rgb<u8>, Vec<u8>>;
 impl ImageHandler for Img {
     fn print_out(&self) {
         let mut buffer = Cursor::new(Vec::new());
-        self.write_to(&mut buffer, image::ImageFormat::Png).unwrap();
-        stdout().write_all(buffer.get_ref()).unwrap();
+        let _ = self.write_to(&mut buffer, image::ImageFormat::Png);
+        let _ = stdout().write_all(buffer.get_ref());
     }
 }

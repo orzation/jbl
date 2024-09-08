@@ -113,7 +113,7 @@ impl Metrics<'_> {
         color: &'a String,
         bg_color: &'a String,
         padding: u8,
-    ) -> Metrics<'a> {
+    ) -> Result<Metrics<'a>, String> {
         let font = match font.as_str() {
             "Serif" => Family::Serif,
             "SansSerif" => Family::SansSerif,
@@ -125,20 +125,20 @@ impl Metrics<'_> {
 
         let hex_color_regex = Regex::new(r#"^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"#).unwrap();
         if !hex_color_regex.is_match(&color) || !hex_color_regex.is_match(&bg_color) {
-            panic!("The color input must be in a legal hexadecimal format!")
+            return Err("The color input must be in a legal hexadecimal format!".to_string());
         }
 
         let color = hex_to_rgb(&color);
         let bg_color = hex_to_rgb(&bg_color);
 
-        Metrics {
+        Ok(Metrics {
             text,
             font,
             size,
             color,
             bg_color,
             padding,
-        }
+        })
     }
 }
 
@@ -197,13 +197,13 @@ mod tests {
                     padding: 8
                 },
                 Metrics::new(
-                    "".to_string(),
-                    &c.0.to_string(),
-                    16.0,
-                    &"#FFF".to_string(),
-                    &"#000".to_string(),
-                    8,
-                )
+                "".to_string(),
+                &c.0.to_string(),
+                16.0,
+                &"#FFF".to_string(),
+                &"#000".to_string(),
+                8,
+            ).expect("new metrics error")
             )
         });
     }
@@ -218,7 +218,7 @@ mod tests {
             &"#0".to_string(),
             &"#000".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod tests {
             &"000".to_string(),
             &"#000".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -244,7 +244,7 @@ mod tests {
             &"#qw12!@".to_string(),
             &"#000".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -257,7 +257,7 @@ mod tests {
             &"#ffffff99".to_string(),
             &"#000".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -270,7 +270,7 @@ mod tests {
             &"#000".to_string(),
             &"#0".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -283,7 +283,7 @@ mod tests {
             &"#000".to_string(),
             &"000".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -296,7 +296,7 @@ mod tests {
             &"#000".to_string(),
             &"#qw12!@".to_string(),
             8,
-        );
+        ).unwrap();
     }
 
     #[test]
@@ -309,6 +309,6 @@ mod tests {
             &"#000".to_string(),
             &"#ffffff99".to_string(),
             8,
-        );
+        ).unwrap();
     }
 }
