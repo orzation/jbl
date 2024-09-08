@@ -8,5 +8,15 @@ mod render;
 
 fn main() {
     let ver: &str = env!("CARGO_PKG_VERSION");
-    Cmd::new_command(ver).into_metrics().render().print_out()
+    let cmd = Cmd::new_command(ver);
+
+    let metrics = match cmd.into_metrics() {
+       Ok(result)  =>  result,
+       Err(e) => {
+        eprintln!("Something Wrong: {}", e);
+        std::process::exit(1);
+       }
+    };
+
+    metrics.render().print_out()
 }
