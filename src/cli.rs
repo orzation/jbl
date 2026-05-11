@@ -30,7 +30,7 @@ impl CmdHandler<'_> for Cmd {
                 arg!(-s --size <VALUE> "Set the font size used to draw image")
                     .value_parser(value_parser!(f32))
                     .required(false)
-                    .default_value("18.0")
+                    .default_value("28.0")
             )
             .arg(
                 arg!(-c --color <COLOR> "Set the color of the font (Only hexadecimal RGB color codes)")
@@ -46,7 +46,13 @@ impl CmdHandler<'_> for Cmd {
                 arg!(-p --padding <VALUE> "Set the padding of the image")
                     .value_parser(value_parser!(u8))
                     .required(false)
-                    .default_value("8")
+                    .default_value("20")
+            )
+            .arg(
+                arg!(-w --width <VALUE> "Set the max line width in pixels for text wrapping")
+                    .value_parser(value_parser!(f32))
+                    .required(false)
+                    .default_value("900.0")
             )
             .arg(
                 arg!([FILE] "Set the the text file to read. With no FILE, or when FILE is -, read standard input.")
@@ -62,6 +68,7 @@ impl CmdHandler<'_> for Cmd {
         let color = self.get_one::<String>("color").unwrap();
         let bg_color = self.get_one::<String>("background-color").unwrap();
         let padding = self.get_one::<u8>("padding").unwrap();
+        let width = self.get_one::<f32>("width").copied();
         let file = self.get_one::<String>("FILE").unwrap();
 
         let mut text_buf = String::new();
@@ -77,6 +84,6 @@ impl CmdHandler<'_> for Cmd {
                 .map_err(|e| format!("failed to read file {}: {}", file, e))?;
         }
 
-        Metrics::new(text_buf, font, *size, color, bg_color, *padding)
+        Metrics::new(text_buf, font, *size, color, bg_color, *padding, width)
     }
 }
